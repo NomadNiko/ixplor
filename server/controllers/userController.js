@@ -4,7 +4,7 @@ const validateEmail = require("../helpers/validateEmail");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
-const { OAuth2Client } = require('google-auth-library');
+const { OAuth2Client } = require("google-auth-library");
 
 const client = new OAuth2Client(process.env.G_CLIENT_ID);
 
@@ -110,6 +110,9 @@ const userController = {
       const rf_token = createToken.refresh({ id: user._id });
       res.cookie("_apprftoken", rf_token, {
         httpOnly: true,
+        secure: true, // Required for HTTPS
+        sameSite: "None", // Required for cross-domain
+        domain: ".ixplor.app", // Your root domain
         path: "/api/auth/access",
         maxAge: 24 * 60 * 60 * 1000, // 24h
       });
@@ -230,20 +233,20 @@ const userController = {
   google: async (req, res) => {
     try {
       const { email, name, picture } = req.body;
-  
+
       if (!email) {
         return res.status(400).json({ msg: "Email not provided." });
       }
-  
+
       // Check if user exists
       const user = await User.findOne({ email });
-      
+
       if (user) {
         const rf_token = createToken.refresh({ id: user._id });
         res.cookie("_apprftoken", rf_token, {
           httpOnly: true,
           path: "/api/auth/access",
-          maxAge: 24 * 60 * 60 * 1000
+          maxAge: 24 * 60 * 60 * 1000,
         });
         res.status(200).json({ msg: "Signing with Google success." });
       } else {
@@ -251,29 +254,33 @@ const userController = {
         const password = email + process.env.G_CLIENT_ID;
         const salt = await bcrypt.genSalt();
         const hashPassword = await bcrypt.hash(password, salt);
-  
+
         const newUser = new User({
           name,
           email,
           password: hashPassword,
-          avatar: picture || "https://res.cloudinary.com/dtxvgswga/image/upload/v1735720559/profile_blank_centered_640_zqhijp.png"
+          avatar:
+            picture ||
+            "https://res.cloudinary.com/dtxvgswga/image/upload/v1735720559/profile_blank_centered_640_zqhijp.png",
         });
-  
+
         await newUser.save();
-        
+
         const rf_token = createToken.refresh({ id: newUser._id });
         res.cookie("_apprftoken", rf_token, {
           httpOnly: true,
           path: "/api/auth/access",
-          maxAge: 24 * 60 * 60 * 1000
+          maxAge: 24 * 60 * 60 * 1000,
         });
-        res.status(200).json({ msg: "Account created and signed in with Google." });
+        res
+          .status(200)
+          .json({ msg: "Account created and signed in with Google." });
       }
     } catch (err) {
-      console.error('Google auth error:', err);
+      console.error("Google auth error:", err);
       return res.status(500).json({ msg: err.message });
     }
-  }
+  },
 };
 
 module.exports = userController;

@@ -12,11 +12,12 @@ const Sidebar = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      await axios.get("/api/auth/signout");
+      await axios.get("/api/auth/signout", { withCredentials: true });
       localStorage.removeItem("_appSignging");
       dispatch({ type: "SIGNOUT" });
+      window.location.href = '/'; // Force redirect after logout
     } catch (err) {
-      console.log(err);
+      console.error("Logout error:", err);
     }
   };
 
