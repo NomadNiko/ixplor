@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
 const logger = require('./utils/logger');
+const cors = require("cors");
 require("dotenv").config();
 
 // Updated MongoDB connection
