@@ -1,5 +1,5 @@
 import { useGoogleLogin } from '@react-oauth/google';
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { isEmpty, isEmail } from "../helper/validate";
@@ -21,6 +21,42 @@ const Login = () => {
   const { email, password } = data;
   const { dispatch } = useContext(AuthContext);
 
+  // Log environment variables at component load
+  useEffect(() => {
+    console.log('Environment Variables:');
+    console.log('Google Client ID:', process.env.REACT_APP_GOOGLE_CLIENT_ID);
+    console.log('Google Redirect URI:', process.env.REACT_APP_GOOGLE_REDIRECT_URI);
+  }, []);
+
+  const googleLogin = useGoogleLogin({
+    flow: 'auth-code',
+    onSuccess: (codeResponse) => {
+      // Ensure redirect URI is defined and encoded
+      const redirectUri = process.env.REACT_APP_GOOGLE_REDIRECT_URI || window.location.origin;
+      const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+      if (!redirectUri) {
+        console.error('Redirect URI is undefined');
+        toast.error('Google Sign-In configuration error');
+        return;
+      }
+
+      const encodedRedirectUri = encodeURIComponent(redirectUri);
+
+      // Construct the full Google OAuth URL
+      const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}&scope=openid%20email%20profile&redirect_uri=${encodedRedirectUri}&access_type=offline&prompt=consent`;
+      
+      console.log('Google OAuth URL:', googleOAuthUrl);
+      
+      // Redirect to Google OAuth
+      window.location.href = googleOAuthUrl;
+    },
+    onError: (errorResponse) => {
+      console.error('Google Login Error:', errorResponse);
+      toast.error("Google Sign-In failed. Please try again.");
+    }
+  });
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
@@ -29,72 +65,24 @@ const Login = () => {
     setVisible(!visible);
   };
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        // Get user info using access token
-        const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-
-        // Send user info to your backend
-        const res = await axios.post("/api/auth/google_signing", {
-          email: userInfo.data.email,
-          name: userInfo.data.name,
-          picture: userInfo.data.picture
-        });
-
-        localStorage.setItem("_appSignging", true);
-        dispatch({ type: "SIGNING" });
-        toast(res.data.msg, {
-          className: "toast-success",
-          bodyClassName: "toast-success",
-        });
-      } catch (err) {
-        toast(err.response?.data?.msg || "Google sign-in failed", {
-          className: "toast-failed",
-          bodyClassName: "toast-failed",
-        });
-      }
-    },
-    onError: () => {
-      toast("Google Sign-In failed. Please try again.", {
-        className: "toast-failed",
-        bodyClassName: "toast-failed",
-      });
-    }
-  });
-
   const login = async (e) => {
     e.preventDefault();
 
     if (isEmpty(email) || isEmpty(password)) {
-      return toast("Please fill in all fields.", {
-        className: "toast-failed",
-        bodyClassName: "toast-failed",
-      });
+      return toast.error("Please fill in all fields.");
     }
 
     if (!isEmail(email)) {
-      return toast("Please enter a valid email address.", {
-        className: "toast-failed",
-        bodyClassName: "toast-failed",
-      });
+      return toast.error("Please enter a valid email address.");
     }
 
     try {
       const res = await axios.post("/api/auth/signing", { email, password });
       localStorage.setItem("_appSignging", true);
       dispatch({ type: "SIGNING" });
-      toast(res.data.msg || "Login successful", {
-        className: "toast-success",
-        bodyClassName: "toast-success",
-      });
+      toast.success(res.data.msg || "Login successful");
     } catch (err) {
-      toast(err.response?.data?.msg || "Login failed", {
-        className: "toast-failed",
-        bodyClassName: "toast-failed",
-      });
+      toast.error(err.response?.data?.msg || "Login failed");
     }
   };
 
@@ -124,7 +112,10 @@ const Login = () => {
           <button 
             type="button" 
             className="btn-alt" 
-            onClick={() => googleLogin()}
+            onClick={() => {
+              console.log('Google login clicked');
+              googleLogin();
+            }}
           >
             sign in with <FcGoogle />
           </button>
