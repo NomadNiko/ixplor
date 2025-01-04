@@ -1,0 +1,11 @@
+@import "../../components/variables/variables.scss";
+@import "../../../public/assets/css/main.scss";
+
+.reset_p {
+  text-align: center;
+  color: lightblue;
+  font-weight: 300;
+  margin-top: 1em;
+  text-transform: capitalize;
+  cursor: pointer;
+}

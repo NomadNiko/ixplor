@@ -1,0 +1,105 @@
+@import "../../components/variables/variables.scss";
+
+.profile {
+  background-color: rgba($color: $purple, $alpha: 0.8);
+  border-radius: 5px;
+  padding: 2em;
+  width: 100%;
+  margin: 0 0 2em 0;
+}
+
+.profile_avatar-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  text-align: center;
+  transition: all 0.3s ease;
+  &:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+  img {
+    width: 200px;
+    height: 200px;
+    box-shadow: 1px 1px 15px -15px $black;
+  }
+  svg {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    height: 100%;
+    width: 50%;
+    opacity: 0;
+    text-align: center;
+    transition: all 0.3s ease;
+    &:hover {
+      transition: all 0.3s ease;
+      opacity: 0.9;
+    }
+  }
+}
+
+.profile_avatar-input {
+  display: none;
+}
+
+.profile_input {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 2em;
+}
+
+.profile_input-form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.profile_input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  .input {
+    width: 100%;
+  }
+} 
+
+.profile_button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2em;
+
+  .profile_update-btn {
+    width: 500px;
+    margin: 6.9px 0;
+    padding: 1em;
+    border-radius: 5px;
+    border: none;
+    height: 50px;
+    text-transform: uppercase;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    background: linear-gradient(to left, $purple-light, $blue-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ 
+    &:hover {
+      transition: all 0.3s ease;
+      box-shadow: none;
+      background: linear-gradient(to right, $purple-light, $blue-dark);
+    }
+  }
+}
+
+.bg-upload {
+  background-color: $blue !important;
+  color: $white-font;
+}

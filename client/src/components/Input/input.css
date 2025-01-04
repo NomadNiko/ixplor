@@ -1,0 +1,68 @@
+.input {
+  margin: 1em 0;
+}
+.input label {
+  position: relative;
+  top: -10px;
+  font-size: 1rem;
+}
+.input label input {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  background-color: #2b1346;
+  color: #ffffff;
+  padding: 1em;
+  border-radius: 5px;
+  width: 100%;
+  height: 50px;
+  outline: none;
+  font-size: 1rem;
+  border: 2px solid transparent;
+}
+.input label span {
+  position: absolute;
+  top: 50%;
+  left: 22px;
+  transform: translate(0, -50%);
+  color: #ffffff;
+  transition: all 0.3s ease;
+  font-weight: 300;
+  font-size: 0.85rem;
+}
+.input label input:not(:-moz-placeholder-shown) + span {
+  color: transparent;
+  transform: translate3d(0, -6px, 0) scale(0.75);
+}
+.input label input:not(:placeholder-shown) + span {
+  color: transparent;
+  transform: translate3d(0, -6px, 0) scale(0.75);
+}
+.input label input:focus {
+  border: 2px solid #2196f3;
+}
+.input label input:focus + span {
+  top: -15px;
+  font-size: 12px;
+  background: linear-gradient(to right, #bd4de9, #1609ca);
+  border-radius: 4px;
+  padding: 0 5px;
+  color: #ffffff;
+}
+.input label .input_icon {
+  color: #99979e;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(92%, -50%);
+  width: 100%;
+  cursor: pointer;
+}
+
+.toast-failed {
+  background: #f96a8b !important;
+  color: #fff;
+}
+
+.toast-success {
+  background: #009688 !important;
+  color: #fff;
+}/*# sourceMappingURL=input.css.map */ 

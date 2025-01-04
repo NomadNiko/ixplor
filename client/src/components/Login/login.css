@@ -1,0 +1,77 @@
+.login_btn {
+  display: flex;
+  flex-direction: column;
+}
+.login_btn button {
+  margin: 6.9px 0;
+  padding: 1em;
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+  height: 50px;
+  text-transform: uppercase;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  background: linear-gradient(to left, #14111b, #090a6e);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login_btn button svg {
+  font-size: 1.4rem;
+  margin-left: 10px;
+}
+.login_btn button:hover {
+  transition: all 0.3s ease;
+  box-shadow: none;
+  background: linear-gradient(to right, #14111b, #090a6e);
+}
+.login_btn .google-btn-container {
+  margin: 6.9px 0;
+  width: 100%;
+}
+.login_btn .google-btn-container iframe {
+  background: linear-gradient(to left, #14111b, #090a6e) !important;
+  border-radius: 5px !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35) !important;
+  height: 50px !important;
+}
+.login_btn .google-btn-container .google-btn {
+  background: linear-gradient(to left, #14111b, #090a6e) !important;
+  border-radius: 5px !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35) !important;
+  color: #fff !important;
+  text-transform: uppercase !important;
+  height: 50px !important;
+}
+.login_btn .google-btn-container .google-btn:hover {
+  box-shadow: none !important;
+  background: linear-gradient(to right, #14111b, #090a6e) !important;
+  transition: all 0.3s ease !important;
+}
+.login_btn .btn-primary,
+.login_btn .btn-alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.login_btn .btn-icon {
+  width: 28px;
+  height: 28px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.login_btn #googleSignInDiv > div {
+  width: 100% !important;
+  height: 50px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+.login_btn #googleSignInDiv > div > iframe {
+  width: 100% !important;
+  scale: 1.5;
+}/*# sourceMappingURL=login.css.map */

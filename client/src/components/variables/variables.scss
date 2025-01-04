@@ -1,0 +1,35 @@
+//colors
+$purple-dark: #14111b;
+$purple: #2b1346;
+$purple-light: #bd4de9;
+$purple-lighter: #99979e;
+$pink: #f96a8b;
+$yellow: #fbc02d;
+$blue: #2196f3;
+$blue-main: #1609ca;
+$blue-light: rgb(105, 201, 233);
+$blue-slate: slateblue;
+$blue-dark: #090a6e;
+$red: #ff0000;
+$red-light: #e5a6a6;
+$green: #009688;
+$green-light: #00ff40;
+$white-font: #ffffff;
+$black: #000000;
+
+// mixins
+@mixin for-tablet {
+    @media (min-width: 768px) {
+      @content;
+    }
+  }
+  @mixin for-laptop {
+    @media (min-width: 992px) {
+      @content;
+    }
+  }
+  @mixin for-desktop {
+    @media (min-width: 1200px) {
+      @content;
+    }
+  } 
