@@ -1,4 +1,5 @@
-import { useContext, useState, useEffect } from "react";
+import { useGoogleLogin } from '@react-oauth/google';
+import { useContext, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { isEmpty, isEmail } from "../helper/validate";
@@ -19,60 +20,6 @@ const Login = () => {
   const [data, setData] = useState(initialState);
   const { email, password } = data;
   const { dispatch } = useContext(AuthContext);
-  const [googleButton, setGoogleButton] = useState(null);
-
-  useEffect(() => {
-    const initializeGoogle = async () => {
-      try {
-        await new Promise((resolve, reject) => {
-          const script = document.createElement("script");
-          script.src = "https://accounts.google.com/gsi/client";
-          script.async = true;
-          script.defer = true;
-          script.onload = resolve;
-          script.onerror = reject;
-          document.body.appendChild(script);
-        });
-
-        if (window.google?.accounts?.id) {
-          window.google.accounts.id.initialize({
-            client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-            callback: handleGoogleSignIn,
-            context: "signin",
-          });
-
-          // Create a hidden button that we'll programmatically click
-          const googleDiv = document.createElement("div");
-          googleDiv.style.display = "none";
-          document.body.appendChild(googleDiv);
-
-          window.google.accounts.id.renderButton(googleDiv, {
-            type: "standard",
-            theme: "outline",
-            size: "large",
-            text: "signin_with",
-            shape: "rectangular",
-          });
-
-          setGoogleButton(googleDiv.querySelector('div[role="button"]'));
-        }
-      } catch (error) {
-        console.error("Failed to initialize Google Sign-In:", error);
-      }
-    };
-
-    initializeGoogle();
-
-    return () => {
-      // Cleanup
-      const hiddenButton = document.querySelector(
-        'div[style="display: none;"]'
-      );
-      if (hiddenButton) {
-        hiddenButton.remove();
-      }
-    };
-  }, []);
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -82,50 +29,41 @@ const Login = () => {
     setVisible(!visible);
   };
 
-  const handleGoogleClick = (e) => {
-    e.preventDefault();
-    if (googleButton) {
-      googleButton.click();
-    } else {
-      toast(
-        "Google Sign-In is not available at the moment. Please try again later.",
-        {
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Get user info using access token
+        const userInfo = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+
+        // Send user info to your backend
+        const res = await axios.post("/api/auth/google_signing", {
+          email: userInfo.data.email,
+          name: userInfo.data.name,
+          picture: userInfo.data.picture
+        });
+
+        localStorage.setItem("_appSignging", true);
+        dispatch({ type: "SIGNING" });
+        toast(res.data.msg, {
+          className: "toast-success",
+          bodyClassName: "toast-success",
+        });
+      } catch (err) {
+        toast(err.response?.data?.msg || "Google sign-in failed", {
           className: "toast-failed",
           bodyClassName: "toast-failed",
-        }
-      );
-    }
-  };
-
-  const handleGoogleSignIn = async (response) => {
-    if (!response.credential) {
+        });
+      }
+    },
+    onError: () => {
       toast("Google Sign-In failed. Please try again.", {
         className: "toast-failed",
         bodyClassName: "toast-failed",
       });
-      return;
     }
-  
-    try {
-      const res = await axios.post("/api/auth/google_signing", {
-        tokenId: response.credential,
-      });
-      localStorage.setItem("_appSignging", true);
-      dispatch({ type: "SIGNING" });
-      
-      // Show appropriate success message based on whether account was created or signed in
-      toast(res.data.msg, {
-        className: "toast-success",
-        bodyClassName: "toast-success",
-        autoClose: 2500,
-      });
-    } catch (err) {
-      toast(err.response?.data?.msg || "Google sign-in failed", {
-        className: "toast-failed",
-        bodyClassName: "toast-failed",
-      });
-    }
-  };
+  });
 
   const login = async (e) => {
     e.preventDefault();
@@ -151,7 +89,6 @@ const Login = () => {
       toast(res.data.msg || "Login successful", {
         className: "toast-success",
         bodyClassName: "toast-success",
-        autoClose: 2500,
       });
     } catch (err) {
       toast(err.response?.data?.msg || "Login failed", {
@@ -184,7 +121,11 @@ const Login = () => {
             sign in with 
             <img src="./assets/img/iX.svg" alt="iX" className="btn-icon" />
           </button>
-          <button type="button" className="btn-alt" onClick={handleGoogleClick}>
+          <button 
+            type="button" 
+            className="btn-alt" 
+            onClick={() => googleLogin()}
+          >
             sign in with <FcGoogle />
           </button>
         </div>
