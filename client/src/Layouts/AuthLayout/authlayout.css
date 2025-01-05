@@ -36,6 +36,25 @@
   color: #e5a6a6;
 }
 
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  color: #14111b !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  /* These additional properties will help enforce hiding */
+  visibility: hidden !important;
+  opacity: 0 !important;
+  z-index: -1000 !important;
+  transform: translateX(-9999px) !important;
+  pointer-events: none !important;
+}
+
 @keyframes float {
   0% {
     box-shadow: 0 5px 15px 0 rgba(252, 222, 255, 0.6);
