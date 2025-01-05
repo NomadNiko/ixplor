@@ -31,6 +31,7 @@ const AuthLayout = () => {
       <div className="authlayout_logo">
         <img src="./assets/img/ixplorfavwhite.svg" alt="logo" />
       </div>
+      <h1 className="sr-only">iXplor - Travel the Globe with Ease</h1>
       {/* form */}
       {login && <Login />}
       {register && <Register />}
@@ -44,7 +45,7 @@ const AuthLayout = () => {
           {login ? "Register" : "Login"}
         </p>
         <p className="authlayout_actions-r" onClick={handleForgot}>
-          forgot 
+          forgot
         </p>
       </div>
     </div>
